@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            margin: 20px;
+            background-color: #121212; /* لون خلفية داكن */
+            color: #e0e0e0; /* لون نص رمادي فاتح */
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #90caf9; /* لون أزرق فاتح */
+            font-size: 30px;
+            text-transform: uppercase;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+        }
+        .question-container {
+            margin-bottom: 25px;
+            padding: 25px;
+            border-radius: 15px;
+            background-color: #1e1e1e; /* خلفية رمادية داكنة */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+        .question {
+            color: #64b5f6; /* لون أزرق متوسط */
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .option {
+            cursor: pointer;
+            padding: 12px 18px;
+            border: 2px solid #37474f; /* لون حدود رمادي غامق */
+            border-radius: 10px;
+            margin: 10px 0;
+            background-color: #263238; /* خلفية داكنة */
+            color: #e0e0e0; /* لون نص فاتح */
+            font-size: 18px;
+            text-align: left;
+            display: block;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+        .option:hover {
+            background-color: #546e7a; /* لون رمادي عند التمرير */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        .option.correct {
+            background-color: #388e3c; /* لون أخضر */
+            color: white;
+        }
+        .option.wrong {
+            background-color: #d32f2f; /* لون أحمر */
+            color: white;
+        }
+        .option.selected {
+            transform: scale(1.05);
+        }
+        .result {
+            font-size: 28px;
+            margin-top: 30px;
+            font-weight: bold;
+            color: gold; /* لون أصفر */
+            text-align: center;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+            display: none; /* إخفاء العنصر في البداية */
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 18px;
+            color: #ccc;
+        }
+        .hint {
+            color: yellow;
+            font-size: 16px;
+            margin-top: 10px;
+            display: none;
+            text-align: right;
+            direction: rtl;
+        }
+    </style>
+</head>
+<body>
+    <h1>قطعة ابن الهيثم</h1>
+
+    <div id="quiz-container">
+        <div class="quiz">
+            <div class="question-container">
+                <p class="question">1. Where was Ibn Al-Haitham born?</p>
+                <div class="option" data-correct="false">Baghdad</div>
+                <div class="option" data-correct="true">Basra</div>
+                <div class="option" data-correct="false">Egypt</div>
+                <p class="hint">الترجمة: اين ولد ابن الهيثم؟</p>
+            </div>
+            <div class="question-container">
+                <p class="question">2. What was Ibn Al-Haitham's famous book called?</p>
+                <div class="option" data-correct="false">Islands of salt</div>
+                <div class="option" data-correct="true">book of optics</div>
+                <div class="option" data-correct="false">Father of optics</div>
+                <p class="hint">الترجمة: ماذا يدعى كتاب ابن الهيثم؟</p>
+            </div>
+            <div class="question-container">
+                <p class="question">3. In Medieval Europe, Ibn Al-Haitham was called .........</p>
+                <div class="option" data-correct="false">Father of optics</div>
+                <div class="option" data-correct="false">Al Basri</div>
+                <div class="option" data-correct="true">The physicist</div>
+                <p class="hint">الترجمة: في اوروبا، ابن الهيثم كان يدعى .....</p>
+            </div>
+            <div class="question-container">
+                <p class="question">4. Who asked Ibn Al-Haitham to regulate the River Nile?</p>
+                <div class="option" data-correct="true">The Caliph in Egypt</div>
+                <div class="option" data-correct="false">Al Basri</div>
+                <div class="option" data-correct="false">Al-Haitham</div>
+                <p class="hint">الترجمة: من طلب من ابن الهيثم ان ينظم نهر النيل؟</p>
+            </div>
+            <div class="question-container">
+                <p class="question">5. When was Ibn al-Haitham born?</p>
+                <div class="option" data-correct="false">In Basra</div>
+                <div class="option" data-correct="false">In Baghdad</div>
+                <div class="option" data-correct="true">965</div>
+                <p class="hint">هنا مكتوب بالسؤال (when) يعني (متى)، ف ديسأل عن السنة مو عن المكان. لو مكتوب (where) جان كلنا يسأل عن المكان </p>
+            </div>
+        </div>
+
+        <div class="result">درجتك: <span id="score">0</span></div>
+    </div>
+
+    <div class="footer">إعداد الأستاذ: علي حسين</div>
+
+    <script>
+        const options = document.querySelectorAll('.option');
+        const resultSpan = document.getElementById('score');
+        const resultDiv = document.querySelector('.result'); // العنصر الخاص بالنتيجة
+        let score = 0;
+        let answeredQuestions = 0; // عداد الأسئلة المجاب عنها
+
+        // إنشاء عناصر صوتية
+        const correctSound = new Audio('Sounds/Correct.wav');
+        const wrongSound = new Audio('Sounds/Wrong.wav');
+
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                const question = option.parentElement;
+                const alreadyAnswered = question.querySelector('.option.correct') || question.querySelector('.option.wrong');
+                const hint = question.querySelector('.hint'); // العنصر الخاص بالتلميح
+
+                if (alreadyAnswered) {
+                    return;
+                }
+
+                const isCorrect = option.getAttribute('data-correct') === "true";
+                if (isCorrect) {
+                    option.classList.add('correct');
+                    score += 2;
+                    correctSound.play(); // تشغيل صوت الإجابة الصحيحة
+                } else {
+                    option.classList.add('wrong');
+                    wrongSound.play(); // تشغيل صوت الإجابة الخاطئة
+                    if (hint) hint.style.display = 'block'; // إظهار التلميح
+                    if (navigator.vibrate) {
+                        navigator.vibrate(80);
+                    }
+                }
+
+                const siblings = question.querySelectorAll('.option');
+                siblings.forEach(sibling => {
+                    if (sibling.getAttribute('data-correct') === "true") {
+                        sibling.classList.add('correct');
+                    }
+                });
+
+                option.classList.add('selected');
+                answeredQuestions++; // زيادة عداد الأسئلة المجاب عنها
+
+                if (answeredQuestions === document.querySelectorAll('.question-container').length) {
+                    resultDiv.style.display = 'block'; // إظهار النتيجة
+                }
+
+                resultSpan.textContent = score;
+            });
+        });
+    </script>
+</body>
+</html>
